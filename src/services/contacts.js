@@ -16,7 +16,7 @@ const update = (id, newObject, setMessage) => {
     const request = axios.put(`${baseUrl}/${id}`, newObject).catch(error => {
       
         setMessage([
-          `Person was already removed from server`,
+          `Cannot update person was removed from server`,
           'error'
         ] 
         

@@ -29,6 +29,17 @@ function App() {
   const [ filter, setFilter ] = useState('')
   const [ message, setMessage ] = useState([null])
 
+  const messageSetter =(errorMessage, errorStyle) => {
+    
+    setMessage([errorMessage,
+      errorStyle
+    ])
+  setTimeout(() => {
+    setMessage([null])
+  }, 5000)
+    console.log(errorMessage)
+  
+  }
 
   const hook = ()  => {
   
@@ -54,14 +65,11 @@ function App() {
           setPersons(persons.concat(res))
           setNewName('')
           setNewNumber('')
-          setMessage([
-            `'${res.name}' added to server`,
-            'add'
-        ])
-        setTimeout(() => {
-          setMessage([null])
-        }, 5000)
-      })}
+          messageSetter(`'${res.name}' added to server`,'add')
+
+      })    .catch(error => { messageSetter(error.response.data.error,'error')
+      })
+    }
       else{
         if(window.confirm(`${newName} is already added to the phonebook, replace the old number with a new one?`)){
           const prs = persons.find(p => p.name === newName)
@@ -70,17 +78,10 @@ function App() {
             .then(rPersons => {
               setPersons(persons.map(person => person.id !== prs.id ? person : rPersons))            
           })
-          setMessage([
-            `successfully updated contact`,
-            'update'
-          ])
-          setTimeout(() => {
-            setMessage([null])
-          }, 5000)            
+          messageSetter(`successfully updated contact`,
+          'update')       
       }
-        //alert(`${newName} is already added to the phonebook, replace the old number with a new one?`)
     }
-
   }
 
   const deletePersonOf = (id) => {
@@ -89,25 +90,13 @@ function App() {
 
     if(window.confirm(`are u sure u want to remove ${person.name}?`)){
       personService.deleteContact(id).catch(error => {
-
-        setMessage([
-          `Person '${person.name}' was already removed from server`,
-          'error'
-        ])
-        setTimeout(() => {
-          setMessage([null])
-        }, 5000)     
+        messageSetter(`Person '${person.name}' was already removed from server`,
+        'error') 
       })
       setPersons(persons.filter(n => n.id !== id))
     }
-    setMessage([
-      `'${person.name}' removed from server`,
-      'remove'
-    ])
-    
-    setTimeout(() => {
-      setMessage([null])
-    }, 5000)
+    messageSetter(`'${person.name}' removed from server`,
+    'remove')
   }
 
   const handleNameChange = (event) => {
@@ -140,7 +129,6 @@ function App() {
       </div>
     )
   }
-
 
   return (
     <div>
